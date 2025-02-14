@@ -4,6 +4,7 @@ By integrating real-time tracking and seamless doctor-patient interactions, this
 
 
 Project features
+
 1⃣ Register patients 
 2⃣ Register Dispensary ➡️ doctor ➡️ phormecist ( 3 steps )
 3⃣ Login (userla 4 denatama eka login ekak thiyenne user anuva adala interface ekata yavanava)
