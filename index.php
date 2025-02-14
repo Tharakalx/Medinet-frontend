@@ -1,4 +1,4 @@
-<?php include 'header.php'; ?>
+<?php include 'components/header.php'; ?>
 <main>
     <section class="main1">
         <h1>Welcome to MediNet</h1> 
@@ -6,4 +6,4 @@
 
     </section>
 </main>
-<?php include 'header.php'; ?>
+<?php include 'components/footer.php'; ?>
