@@ -23,10 +23,19 @@
     <thead>
         <tr>
             <th>Phone Number</th>
+            <th>NIC</th>
+
             <th>Name</th>
+            <th>date_of_birth</th>
             <th>Age</th>
             <th>Gender</th>
             <th>City</th>
+            <th>username</th>
+            <th>address</th>
+            <th>email</th>
+            <th>blood_group</th>
+            <th>weight</th>
+            <th>height</th>
            
         </tr>
     </thead>
@@ -53,10 +62,19 @@ function fetchPaient() {
             data.forEach(paient => {
                 let row = `<tr>
                     <td>${paient.phone_number}</td>
+                    <td>${paient.nic}</td>
                     <td>${paient.name}</td>
+                    <td>${paient.date_of_birth}</td>
                     <td>${paient.age}</td>
                     <td>${paient.gender}</td>
                     <td>${paient.city}</td>
+                    <td>${paient.username}</td>
+                    <td>${paient.address}</td>
+                    <td>${paient.email}</td>
+                    <td>${paient.blood_group}</td>
+                    <td>${paient.weight}</td>
+                    <td>${paient.height}</td>
+
                    
                 </tr>`;
                 tableBody.innerHTML += row;

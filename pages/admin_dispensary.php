@@ -23,6 +23,8 @@
     <thead>
         <tr>
             <th>ID</th>
+            <th>Name</th>
+
             <th>Address</th>
             <th>City</th>
             <th>License Number</th>
@@ -55,6 +57,7 @@ function fetchdispensaries() {
             data.forEach(dispensaries => {
                 let row = `<tr>
                     <td>${dispensaries.id}</td>
+                    <td>${dispensaries.name}</td>
                     <td>${dispensaries.address}</td>
                     <td>${dispensaries.city}</td>
                     <td>${dispensaries.license_number}</td>

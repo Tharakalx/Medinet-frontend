@@ -23,6 +23,7 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>User Name</th>
                     <th>ID</th>
                     <th>Phone Number</th>
                     <th>MBBS</th>
@@ -52,6 +53,7 @@ function fetchDoctors() {
             data.forEach(doctor => {
                 let row = `<tr>
                     <td>${doctor.name}</td>
+                    <td>${doctor.username}</td>
                     <td>${doctor.id}</td>
                     <td>${doctor.phone_number}</td>
                     <td>${doctor.mbbs}</td>
