@@ -17,7 +17,6 @@
     <main class="main-content">
         <h1>Doctor Details</h1>
         <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for doctors..." class="search-bar">
-    
 
         <!-- Doctor Details Table -->
         <table border="1">
@@ -27,39 +26,59 @@
                     <th>ID</th>
                     <th>Phone Number</th>
                     <th>MBBS</th>
-                    <th>Email</th>
                     <th>License Number</th>
                     <th>Hospital</th>
+                    <th>Dispensary ID</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- Example static doctor data -->
-                <tr>
-                    <td>Dr. John Doe</td>
-                    <td>12345</td>
-                    <td>+123456789</td>
-                    <td>MBBS</td>
-                    <td>johndoe@example.com</td>
-                    <td>ABC12345</td>
-                    <td>General Hospital</td>
-                </tr>
-                <tr>
-                    <td>Dr. Jane Smith</td>
-                    <td>67890</td>
-                    <td>+987654321</td>
-                    <td>MBBS</td>
-                    <td>janesmith@example.com</td>
-                    <td>XYZ98765</td>
-                    <td>City Medical Center</td>
-                </tr>
-                <!-- Add more rows as needed -->
+            <tbody id="doctorTableBody">
             </tbody>
         </table>
     </main>
 </div>
 
 <script>
-    const menuBtn = document.getElementById("menu");
+document.addEventListener("DOMContentLoaded", function () {
+    fetchDoctors();
+});
+
+function fetchDoctors() {
+    fetch("http://localhost/medinet/Medinet-backend/admin_dashboard_backend.php?type=doctor")
+
+        .then(response => response.json())
+        .then(data => {
+            let tableBody = document.getElementById("doctorTableBody");
+            tableBody.innerHTML = "";
+            data.forEach(doctor => {
+                let row = `<tr>
+                    <td>${doctor.name}</td>
+                    <td>${doctor.id}</td>
+                    <td>${doctor.phone_number}</td>
+                    <td>${doctor.mbbs}</td>
+                    <td>${doctor.license_number}</td>
+                    <td>${doctor.hospital}</td>
+                    <td>${doctor.dispensary_id}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Error fetching doctors:", error));
+}
+
+function searchTable() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let rows = document.querySelectorAll("#doctorTableBody tr");
+
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        if (text.includes(input)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+const menuBtn = document.getElementById("menu");
     const sidebar = document.querySelector(".sidebar");
 
     menuBtn.onclick = function () {
