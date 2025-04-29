@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #e3f2fd; /* Light background for the whole page */
+    background-color: #e3f2fd; 
 }
 
 /* Header Styling */
@@ -12,7 +12,7 @@ header {
     background-color: #2dd1e6;
     color: white;
     padding: 2px 15px;
-    height: 80px; /* Reduced height */
+    height: 80px; 
     padding-bottom: 0px;
     justify-content: space-between;
     display: flex;
@@ -58,14 +58,14 @@ footer {
     color: white;
     padding: 15px;
     text-align: center;
-    margin-top: auto; /* Ensures footer stays at the bottom */
+    margin-top: auto; 
 }
 
 
 /* Main container for sidebar and content */
 .container {
     display: flex;
-    min-height: 100vh; /* Full screen height */
+    min-height: 100vh; 
 }
 
 /* Sidebar Styling */
@@ -82,18 +82,18 @@ footer {
 
 }
 .sidebar:hover {
-    background-color: #0895b8; /* Slightly darker shade on hover */
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3); /* Adds a subtle shadow effect */
+    background-color: #0895b8; 
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3); 
 }
 .sidebar ul b li:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Slight transparency */
-    transform: translateX(5px); /* Moves item slightly to the right */
-    border-left: 4px solid #2dd1e6; /* Highlight with a left border */
+    background-color: rgba(255, 255, 255, 0.2); 
+    transform: translateX(5px); 
+
 }
 .sidebar ul b li a:hover {
-    background-color: #066e88; /* Darker background */
-    color: #2dd1e6; /* Change text color */
-    padding-left: 15px; /* Indent on hover */
+    background-color: #066e88; 
+    color: #2dd1e6; 
+    padding-left: 15px; 
     transition: all 0.3s ease;
 }
 @media screen and (max-width: 768px) {
@@ -113,7 +113,7 @@ footer {
     }
 
     .sidebar {
-        display: none; /* Hide sidebar on mobile */
+        display: none; 
           
     }
     
@@ -139,10 +139,7 @@ footer {
     margin-left: 40px;
 }
 
-/* Hover effect on the image */
-/* #admin_Details:hover {
-    transform: scale(1.1); 
-} */
+
 
 .sidebar ul {
     list-style: none;
@@ -189,9 +186,9 @@ footer {
 
 /* Hover Effect */
 .card:hover {
-    transform: translateY(-5px); /* Slightly lifts the card */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Adds a deeper shadow */
-    background-color: #a8dce3; /* Slightly changes background color */
+    transform: translateY(-5px); 
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); 
+    background-color: #a8dce3; 
 }
 
 .card h3 {
@@ -296,11 +293,7 @@ td, th {
     border-right: 1px solid #ddd;
 }
 
-/* First Column (Doctor Name) Highlight */
-/* td:first-child, th:first-child {
-    font-weight: bold;
-    color: #0476b8;
-} */
+
 
 /* Table Container (Optional) */
 .table-container {
@@ -319,11 +312,11 @@ td, th {
 /* Style for the search input field */
 #searchInput {
     width: 100%;
-    max-width: 300px; /* Adjust width as needed */
+    max-width: 300px; 
     padding: 10px;
     margin-bottom: 15px;
-    border: 2px solid #0889a9; /* Border color */
-    border-radius: 20px; /* Rounded edges */
+    border: 2px solid #0889a9; 
+    border-radius: 20px; 
     outline: none;
     font-size: 1em;
     transition: 0.3s ease-in-out;
