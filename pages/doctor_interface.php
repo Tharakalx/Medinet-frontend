@@ -1,211 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Panel - Patient Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            display: flex;
-            font-family: Arial, sans-serif;
-        }
-
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background: #343a40;
-            color: white;
-            padding: 20px;
-            position: fixed;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px;
-        }
-
-        .sidebar a:hover {
-            background: #495057;
-            border-radius: 5px;
-        }
-
-        .content {
-            margin-left: 260px;
-            padding: 20px;
-            width: 100%;
-        }
-
-        .hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #eef2f5;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      text-align: center;
+      color: #34495e;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #3498db;
+      color: #fff;
+      font-weight: 600;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    button {
+      padding: 8px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .accept-btn {
+      background-color: #2ecc71;
+      color: #fff;
+    }
+    .accept-btn:hover {
+      background-color: #27ae60;
+    }
+    .remove-btn {
+      background-color: #e74c3c;
+      color: #fff;
+    }
+    .remove-btn:hover {
+      background-color: #c0392b;
+    }
+    .view-btn {
+      background-color: #3498db;
+      color: #fff;
+    }
+    .view-btn:hover {
+      background-color: #2980b9;
+    }
+    .patient-details {
+      margin-top: 30px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      display: none;
+    }
+    .prescription-form {
+      margin-top: 20px;
+    }
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      min-height: 100px;
+      resize: vertical;
+    }
+    .submit-btn {
+      background-color: #27ae60;
+      color: white;
+      margin-top: 10px;
+      padding: 10px 25px;
+      border-radius: 6px;
+      font-size: 16px;
+      display: inline-block;
+    }
+    .submit-btn:hover {
+      background-color: #219150;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #7f8c8d;
+      font-style: italic;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h3>MediNet</h3>
-        <a href="#" onclick="showSection('dashboard')">Dashboard</a>
-        <a href="#" onclick="showSection('patients')">Manage Patients</a>
-        <a href="#" onclick="showSection('prescriptions')">Issue Prescription</a>
-        <a href="#" onclick="showSection('history')">Patient History</a>
+<div class="container">
+  <h1>Doctor Dashboard</h1>
+
+  <h2>Pending Appointments</h2>
+  <div id="loading-appointments" class="loading">Loading appointments...</div>
+  
+  <table id="appointments-table">
+    <thead>
+      <tr>
+      <th>Appointment No</th>
+      <th>Patient ID</th>
+      <th>Patient Name</th>
+      <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Appointments will be loaded here -->
+    </tbody>
+  </table>
+
+  <div id="patient-details" class="patient-details">
+    <h2>Patient Information</h2>
+    <div id="patient-info"></div>
+
+    <div class="prescription-form">
+      <h3>Write Prescription</h3>
+      <textarea id="prescription-text" placeholder="Enter prescription details..."></textarea>
+      <button id="submit-prescription" class="submit-btn">Submit Prescription</button>
     </div>
+  </div>
+</div>
 
-    <!-- Main Content -->
-    <div class="content">
+<script>
+let currentPatientId = null;
 
-        <!-- Dashboard -->
-        <div id="dashboard">
-            <h2>Welcome, Doctor</h2>
-            <p>Select an option from the sidebar to manage patients, prescriptions, or history.</p>
-        </div>
+document.addEventListener('DOMContentLoaded', function () {
+  loadAppointments();
+  document.getElementById('submit-prescription').addEventListener('click', submitPrescription);
+});
 
-        <!-- Patient Management -->
-        <div id="patients" class="hidden">
-            <h2>Manage Patients</h2>
+function loadAppointments() {
+  fetch('../../Medinet-backend/get_appointments.php')
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.querySelector('#appointments-table tbody');
+      tbody.innerHTML = '';
 
-            <!-- Add New Patient Form -->
-            <div class="mb-3">
-                <input type="text" id="newPatientName" class="form-control mb-2" placeholder="Patient Name">
-                <input type="number" id="newPatientAge" class="form-control mb-2" placeholder="Age">
-                <input type="text" id="newPatientCondition" class="form-control mb-2" placeholder="Condition">
-                <button class="btn btn-success" onclick="addPatient()">Add Patient</button>
-            </div>
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4">No pending appointments</td></tr>';
+      } else {
+        data.forEach(appointment => {
+          const row = `
+            <tr>
+              <td>${appointment.id}</td>
+              <td>${appointment.patient_id}</td>
+              <td>${appointment.patient_name}</td>
+              <td>
+                <button class="accept-btn" onclick="acceptAppointment(${appointment.id})">Accept</button>
+                <button class="remove-btn" onclick="removeAppointment(${appointment.id})">Remove</button>
+                <button class="view-btn" onclick="viewPatient('${appointment.patient_id}')">View</button>
+              </td>
+            </tr>
+          `;
+          tbody.innerHTML += row;
+        });
+      }
+    })
+    .catch(() => alert('Failed to load appointments.'));
+}
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Condition</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="patient-list">
-                    <!-- Patient data will be inserted here -->
-                </tbody>
-            </table>
-        </div>
+function acceptAppointment(id) {
+  if (confirm('Accept this appointment?')) {
+    const formData = new FormData();
+    formData.append('id', id);
 
-        <!-- Prescription Issuance -->
-        <div id="prescriptions" class="hidden">
-            <h2>Issue Prescription</h2>
-            <input type="text" id="patientName" class="form-control mb-2" placeholder="Patient Name">
-            <textarea id="prescriptionText" class="form-control mb-2" placeholder="Prescription Details"></textarea>
-            <button class="btn btn-success" onclick="issuePrescription()">Submit</button>
-        </div>
+    fetch('../../Medinet-backend/accept_appointment.php', { method: 'POST', body: formData })
+      .then(response => response.text())
+      .then(msg => {
+        alert(msg);
 
-        <!-- Patient History -->
-        <div id="history" class="hidden">
-            <h2>Patient History</h2>
-            <input type="text" id="searchPatient" class="form-control mb-2" placeholder="Search by Name">
-            <button class="btn btn-primary" onclick="searchHistory()">Search</button>
-            <div id="historyResults"></div>
-        </div>
-
-    </div>
-
-    <script>
-        function showSection(sectionId) {
-            document.querySelectorAll('.content > div').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
+        // Remove the appointment row immediately from the UI
+        const row = [...document.querySelectorAll('#appointments-table tbody tr')]
+          .find(r => r.querySelector('td')?.textContent == id);
+        if (row) {
+          row.remove(); // This removes the accepted row from table
         }
 
-        // Sample patient data
-        let patients = [
-            { name: "John Doe", age: 45, condition: "Diabetes" },
-            { name: "Jane Smith", age: 34, condition: "Hypertension" },
-            { name: "Mark Wilson", age: 50, condition: "Heart Disease" }
-        ];
-
-        function loadPatients() {
-            let table = document.getElementById("patient-list");
-            table.innerHTML = "";
-            patients.forEach((patient, index) => {
-                let row = `
-                    <tr>
-                        <td><input type="text" value="${patient.name}" id="name-${index}" class="form-control"></td>
-                        <td><input type="number" value="${patient.age}" id="age-${index}" class="form-control"></td>
-                        <td><input type="text" value="${patient.condition}" id="condition-${index}" class="form-control"></td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="updatePatient(${index})">Update</button>
-                            <button class="btn btn-danger btn-sm" onclick="removePatient(${index})">Remove</button>
-                        </td>
-                    </tr>
-                `;
-                table.innerHTML += row;
-            });
+        // Then view patient details
+        const patientId = row?.querySelectorAll('td')[1]?.textContent;
+        if (patientId) {
+          currentAppointmentId = id;
+          viewPatient(patientId);
         }
 
-        function addPatient() {
-            let name = document.getElementById("newPatientName").value;
-            let age = document.getElementById("newPatientAge").value;
-            let condition = document.getElementById("newPatientCondition").value;
+      })
+      .catch(() => alert('Failed to accept appointment.'));
+  }
+}
 
-            if (name && age && condition) {
-                patients.push({ name, age, condition });
-                loadPatients();
-                document.getElementById("newPatientName").value = "";
-                document.getElementById("newPatientAge").value = "";
-                document.getElementById("newPatientCondition").value = "";
-            } else {
-                alert("Please fill all fields.");
-            }
-        }
 
-        function updatePatient(index) {
-            let updatedName = document.getElementById(`name-${index}`).value;
-            let updatedAge = document.getElementById(`age-${index}`).value;
-            let updatedCondition = document.getElementById(`condition-${index}`).value;
+function removeAppointment(id) {
+  if (confirm('Remove this appointment?')) {
+    const formData = new FormData();
+    formData.append('id', id);
 
-            patients[index] = { name: updatedName, age: updatedAge, condition: updatedCondition };
-            alert("Patient information updated!");
-        }
+    fetch('../../Medinet-backend/remove_appointment.php', { method: 'POST', body: formData })
+      .then(response => response.text())
+      .then(msg => {
+        alert(msg);
+        loadAppointments();
+      })
+      .catch(() => alert('Failed to remove appointment.'));
+  }
+}
 
-        function removePatient(index) {
-            if (confirm("Are you sure you want to remove this patient?")) {
-                patients.splice(index, 1);
-                loadPatients();
-            }
-        }
+function viewPatient(patientId) {
+  fetch(`../../Medinet-backend/get_patient.php?patient_id=${patientId}`)
+    .then(response => response.json())
+    .then(patient => {
+      if (patient.error) {
+        alert('Patient not found.');
+        return;
+      }
 
-        function issuePrescription() {
-            let name = document.getElementById("patientName").value;
-            let prescription = document.getElementById("prescriptionText").value;
-            if (name && prescription) {
-                alert(`Prescription for ${name} has been issued.`);
-                document.getElementById("patientName").value = "";
-                document.getElementById("prescriptionText").value = "";
-            } else {
-                alert("Please enter all details.");
-            }
-        }
+      currentPatientId = patientId;
+      currentPatientName = patient.name;
 
-        function searchHistory() {
-            let name = document.getElementById("searchPatient").value.toLowerCase();
-            let resultDiv = document.getElementById("historyResults");
-            resultDiv.innerHTML = "";
+      const infoHTML = `
+  <p><strong>Name:</strong> ${patient.name}</p>
+  <p><strong>Date of Birth:</strong> ${patient.date_of_birth}</p>
+  <p><strong>Age:</strong> ${calculateAge(patient.date_of_birth)} years</p>
+  <p><strong>Blood Group:</strong> ${patient.blood_group ?? 'N/A'}</p>
+  <p><strong>Weight:</strong> ${patient.weight ?? 'N/A'} kg</p>
+  <p><strong>Height:</strong> ${patient.height ?? 'N/A'} cm</p>
+`;
 
-            let matched = patients.filter(p => p.name.toLowerCase().includes(name));
+      document.getElementById('patient-info').innerHTML = infoHTML;
+      document.getElementById('patient-details').style.display = 'block';
+    })
+    .catch(() => alert('Failed to load patient details.'));
+}
 
-            if (matched.length > 0) {
-                matched.forEach(p => {
-                    resultDiv.innerHTML += `<p><strong>${p.name}</strong> - ${p.condition}</p>`;
-                });
-            } else {
-                resultDiv.innerHTML = "<p>No records found.</p>";
-            }
-        }
+function submitPrescription() {
+  if (!currentPatientId || !currentAppointmentId) {
+    return alert('No patient selected.');
+  }
 
-        window.onload = loadPatients;
-    </script>
+  const prescription = document.getElementById('prescription-text').value.trim();
+  if (!prescription) {
+    return alert('Please enter prescription details.');
+  }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  const formData = new FormData();
+  formData.append('patient_id', currentPatientId);
+  formData.append('appointment_id', currentAppointmentId);
+  formData.append('description', prescription);
+
+  fetch('../../Medinet-backend/add_prescription.php', { method: 'POST', body: formData })
+    .then(response => response.text())
+    .then(msg => {
+      alert(msg);
+      document.getElementById('prescription-text').value = '';
+      document.getElementById('patient-details').style.display = 'none';
+      
+    })
+    .catch(() => alert('Failed to submit prescription.'));
+}
+
+
+function calculateAge(dob) {
+  const birthDate = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+</script>
 
 </body>
 </html>
