@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediNet Patient Login</title>
+    <title>MediNet Login</title>
     <style>
         :root {
             --primary-color: #2196F3;
@@ -159,12 +159,14 @@
             border-radius: var(--border-radius);
             background: rgba(244, 67, 54, 0.1);
             font-size: 0.9em;
-            display: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
         .error.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
+            opacity: 1;
+            visibility: visible;
         }
 
         @keyframes fadeIn {
@@ -189,48 +191,136 @@
                 font-size: 16px;
             }
         }
+
+        /* Additional styles for user type selection */
+        .user-type-container {
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            box-sizing: border-box;
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+            outline: none;
+            background: white;
+        }
     </style>
 </head>
 <body>
 
 <div class="login-container">
-    <h2>Patient Login</h2>
+    <h2>MediNet Login</h2>
+    <div class="user-type-container">
+        <select id="userType" required>
+            <option value="">Select User Type</option>
+            <option value="patient">Patient</option>
+            <option value="doctor">Doctor</option>
+            <option value="admin">Admin</option>
+            <option value="pharmacist">Pharmacist</option>
+        </select>
+    </div>
     <input type="text" id="username" placeholder="Username" required />
     <input type="password" id="password" placeholder="Password" required />
     <div class="button-container">
         <button class="login-button" onclick="login()">Login</button>
         <div class="divider">OR</div>
-        <a href="patient_register.php" class="register-button">Register as New Patient</a>
+        <div id="registerLink">
+            <a href="patient_register.php" class="register-button">Register as New Patient</a>
+        </div>
     </div>
     <div class="error" id="error"></div>
 </div>
 
 <script>
 function login() {
+    const userType = document.getElementById("userType").value.trim();
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
+    const errorElement = document.getElementById("error");
+    
+    // Reset any existing error messages
+    errorElement.classList.remove("show");
 
-    fetch("../../Medinet-backend/patient_login.php", {
+    if (!userType) {
+        errorElement.innerText = "Please select a user type";
+        errorElement.classList.add("show");
+        return;
+    }
+
+    if (!username || !password) {
+        errorElement.innerText = "Please enter both username and password";
+        errorElement.classList.add("show");
+        return;
+    }
+
+    // Define the endpoints for different user types
+    const endpoints = {
+        patient: "../../Medinet-backend/patient_login.php",
+        doctor: "../../Medinet-backend/doctor_login.php",
+        admin: "../../Medinet-backend/admin_login.php",
+        pharmacist: "../../Medinet-backend/pharmacist_login.php"
+    };
+
+    // Define the redirect pages for different user types
+    const redirectPages = {
+        patient: "patient_interface.php",
+        doctor: "doctor_interface.php",
+        admin: "admin_dashboard.php",
+        pharmacist: "pharmacy_interface.php"
+    };
+
+    fetch(endpoints[userType], {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json' // Important: Sending JSON
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({ username, password })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
-            alert("Login successful!");
-            window.location.href = "patient_interface.php"; // Redirect after login
+            window.location.href = redirectPages[userType];
         } else {
-            document.getElementById("error").innerText = data.message;
+            errorElement.innerText = data.message || "Invalid credentials";
+            errorElement.classList.add("show");
         }
     })
     .catch(error => {
         console.error("Error:", error);
-        document.getElementById("error").innerText = "Something went wrong.";
+        errorElement.innerText = "Invalid username or password. Please try again.";
+        errorElement.classList.add("show");
     });
 }
+
+// Update register link based on user type selection
+document.getElementById("userType").addEventListener("change", function() {
+    const userType = this.value;
+    const registerLink = document.getElementById("registerLink");
+    
+    if (userType === "patient") {
+        registerLink.innerHTML = '<a href="patient_register.php" class="register-button">Register as New Patient</a>';
+    } else if (userType === "doctor" || userType === "pharmacist") {
+        registerLink.innerHTML = '<a href="dispancery_register.php" class="register-button">Register as Healthcare Provider</a>';
+    } else {
+        registerLink.innerHTML = ''; // Hide register button for admin
+    }
+});
 </script>
 
 </body>
