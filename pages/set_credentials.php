@@ -18,7 +18,7 @@ $nic_no = $_GET['nic_no'];
 
 <h2>Set Your Username & Password</h2>
 
-<form action="../../Medinet-backend/credentials_backend.php" method="POST">
+<form action="../../Medinet-backend/credentials_backend.php?" method="POST">
     <input type="hidden" name="nic_no" value="<?php echo $nic_no; ?>">
     <input type="text" name="username" placeholder="Choose Username" required>
     <input type="password" name="password" placeholder="Choose Password" required>
