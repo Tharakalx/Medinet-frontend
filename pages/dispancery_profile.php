@@ -8,12 +8,12 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
+            margin: 20px;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 200vh;
         }
 
         .container {
@@ -22,7 +22,8 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            padding: 20px;
+            padding top: 20px;
+            
         }
 
         .profile-box {
@@ -81,9 +82,16 @@
         button:hover {
             background-color: darkgreen;
         }
+        .main_countainer{
+           
+            display: flex;
+            flex-direction: column;
+            
+        }
     </style>
 </head>
 <body>
+    <div class ="main_Countainer">
     <div class="container">
         <div class="profile-box">
             <h2 class="title">Dispensary Details</h2>
@@ -158,5 +166,97 @@
             document.getElementById('detailsSection').innerHTML = '<p>No dispensary ID provided in URL.</p>';
         }
     </script>
+
+<div>
+    <div class="container">
+        <div class="profile-box">
+            <h2 class="title">Add Appointment</h2>
+
+            <!-- Appointment Form -->
+            <form id="appointmentForm">
+                <input type="hidden" id="dispensary_id" value="1"> <!-- Hidden field for dispensary_id -->
+
+                <div class="detail-item">
+                    <strong>Doctor ID:</strong>
+                    <input type="text" id="doctor_id" class="form-input" placeholder="Enter Doctor ID" required>
+                </div>
+                <div class="detail-item">
+                    <strong>Patient ID:</strong>
+                    <input type="text" id="patient_id" class="form-input" placeholder="Enter Patient ID" required>
+                </div>
+                <div class="detail-item">
+                    <strong>Patient Number:</strong>
+                    <input type="number" id="patient_number" class="form-input" placeholder="Enter Patient Number" required>
+                </div>
+                <div class="detail-item">
+                    <strong>Date:</strong>
+                    <input type="date" id="appointment_date" class="form-input" required>
+                </div>
+                <div class="detail-item">
+                    <strong>Time Slot:</strong>
+                    <input type="time" id="time_slot" class="form-input" required>
+                </div>
+                <div class="detail-item">
+                    <strong>Status:</strong>
+                    <select id="status" class="form-input" required>
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Canceled">Canceled</option>
+                    </select>
+                </div>
+
+                <button type="submit">Add Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Handle form submission and send appointment details to the backend
+        document.getElementById('appointmentForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from submitting normally
+
+            // Collect form data
+            const doctor_id = document.getElementById('doctor_id').value;
+            const patient_id = document.getElementById('patient_id').value;
+            const patient_number = document.getElementById('patient_number').value;
+            const dispensary_id = document.getElementById('dispensary_id').value;
+            const date = document.getElementById('appointment_date').value;
+            const time_slot = document.getElementById('time_slot').value;
+            const status = document.getElementById('status').value;
+
+            // Send the appointment data to the backend
+            fetch('http://localhost/Medinet-backend/add_appointment.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    doctor_id,
+                    patient_id,
+                    patient_number,
+                    dispensary_id,
+                    date,
+                    time_slot,
+                    status
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Appointment added successfully!");
+                    // Optionally reset the form or show a success message
+                    document.getElementById('appointmentForm').reset();
+                } else {
+                    alert("Error adding appointment.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Failed to add appointment.");
+            });
+        });
+    </script>
+    </div>
+    </div>
 </body>
 </html>
